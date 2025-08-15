@@ -1,0 +1,194 @@
+# LaTeX Build Files
+*.aux
+*.bbl
+*.blg
+*.log
+*.out
+*.toc
+*.lof
+*.lot
+*.fls
+*.fdb_latexmk
+*.synctex.gz
+*.nav
+*.snm
+*.vrb
+*.spl
+*.figlist
+*.makefile
+*.run.xml
+*.bcf
+*.idx
+*.ilg
+*.ind
+*.acn
+*.acr
+*.alg
+*.glg
+*.glo
+*.gls
+*.ist
+*.lol
+*.dvi
+*.ps
+*.eps
+*.fls
+*.figlist
+*.makefile
+*.fls
+*.fdb_latexmk
+
+# LaTeX Temporary Files
+*~
+*.backup
+*.swp
+*.tmp
+*.temp
+
+# LaTeX Output (keep PDFs in repo, but ignore temp ones)
+# *.pdf  # Uncomment if you don't want to track PDFs
+to_be_reference/
+# Python Cache and Bytecode
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+.venv
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# IDE and Editor Files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+# OS Generated Files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+Icon?
+
+# Archive and Submission Files
+*.zip
+*.tar.gz
+*.rar
+kbs_submission/
+kbs_submission_*/
+submission_*/
+
+# Backup Files
+*.bak
+*.orig
+*.backup
+*~
+
+# Generated Files (from our scripts)
+extracted_sections_complete/
+figures_helper.tex
+main_integrated.tex
+
+# Bibliography Tools
+*.bib.bak
+*.bib.sav
+
+# Reference Manager Files
+*.ris
+*.enw
+*.ciw
+*.tml
+*.xml
+
+# Spell Check
+*.spl
+
+# Local Configuration
+.env
+.env.local
+config.local.*
+
+# Documentation Build
+docs/_build/
+.doctrees/
+
+# Testing
+.coverage
+.pytest_cache/
+.tox/
+htmlcov/
+
+# Logs
+*.log
+logs/
+
+# Temporary Internet Files (Windows)
+Temporary Internet Files/
+
+# Node.js (if using any JS tools)
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# macOS Extended Attributes
+.AppleDouble/
+.LSOverride
+
+# Windows Image File Caches
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# Folder config file
+.folderstamp
+
+# Build directories
+build/
+dist/
+*.egg-info/
+
+# Vim
+*.swp
+*.swo
+*~
+
+# Emacs
+\#*\#
+.\#*
+
+# Sublime Text
+*.sublime-*
+
+# Archives and compressed files (except intentional submissions)
+*.7z
+*.dmg
+*.gz
+*.iso
+*.jar
+*.rar
+*.tar
+*.zip
+
+# Keep important PDFs (main papers) but ignore temp ones
+!main.pdf
+!main_integrated.pdf
+!highlights.pdf
+temp_*.pdf
+draft_*.pdf
+scratch_*.pdf
+
+# Ignore auto-generated integrated file (since it's built from scripts)
+# main_integrated.tex  # Uncomment if you want to regenerate it each time
