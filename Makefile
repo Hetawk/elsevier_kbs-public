@@ -12,19 +12,46 @@ EXTRACTED_DIR = extracted_sections_complete
 EXTRACT_SCRIPT = extract_complete.py
 INTEGRATE_SCRIPT = integrate_kbs.py
 
-# Default target - build integrated paper
-all: integrated
+# Default target - build main paper directly
+all: main
 
-# Build template paper (basic KBS template)
-template: $(MAIN).pdf
+# Build main paper directly (with complete content) - force rebuild
+main:
+	@echo "Building KBS paper (forced rebuild)..."
+	pdflatex $(MAIN)
+	-bibtex $(MAIN) 2>/dev/null || true
+	pdflatex $(MAIN)
+	pdflatex $(MAIN)
+	@echo "Paper built: $(MAIN).pdf"
 
-$(MAIN).pdf: $(MAIN).tex
-	@echo "Building KBS template paper..."
+# Build main paper directly (alternative target name) - force rebuild
+build:
+	@echo "Building KBS paper (forced rebuild)..."
+	pdflatex $(MAIN)
+	-bibtex $(MAIN) 2>/dev/null || true
+	pdflatex $(MAIN)
+	pdflatex $(MAIN)
+	@echo "Paper built: $(MAIN).pdf"
+
+# Build main paper with dependency checking (only rebuild if needed)
+main-check: $(MAIN).pdf
+
+# Build template paper (basic KBS template) - force rebuild
+template:
+	@echo "Building KBS template paper (forced rebuild)..."
 	pdflatex $(MAIN)
 	-bibtex $(MAIN) 2>/dev/null || true
 	pdflatex $(MAIN)
 	pdflatex $(MAIN)
 	@echo "Template paper built: $(MAIN).pdf"
+
+$(MAIN).pdf: $(MAIN).tex
+	@echo "Building KBS paper (dependency-based)..."
+	pdflatex $(MAIN)
+	-bibtex $(MAIN) 2>/dev/null || true
+	pdflatex $(MAIN)
+	pdflatex $(MAIN)
+	@echo "Paper built: $(MAIN).pdf"
 
 # Extract content from source IEEE paper
 extract: $(EXTRACTED_DIR)
@@ -60,6 +87,14 @@ highlights.pdf: highlights.tex
 
 # Quick compile without bibliography
 quick:
+	@echo "Quick compile of main paper..."
+	pdflatex $(MAIN)
+
+quick-main:
+	@echo "Quick compile of main paper..."
+	pdflatex $(MAIN)
+
+quick-integrated:
 	@echo "Quick compile of integrated paper..."
 	pdflatex $(INTEGRATED)
 
@@ -114,7 +149,23 @@ pages:
 # Validate paper meets KBS requirements
 validate:
 	@echo "=== KBS Journal Requirements Validation ==="
-	@if [ -f "$(INTEGRATED).pdf" ]; then \
+	@if [ -f "$(MAIN).pdf" ]; then \
+		if command -v pdfinfo > /dev/null 2>&1; then \
+			pages=$$(pdfinfo "$(MAIN).pdf" 2>/dev/null | grep Pages | awk '{print $$2}'); \
+		elif command -v mdls > /dev/null 2>&1; then \
+			pages=$$(mdls -name kMDItemNumberOfPages "$(MAIN).pdf" 2>/dev/null | awk '{print $$3}'); \
+		else \
+			pages="unknown"; \
+		fi; \
+		echo "✓ Paper: $(MAIN).pdf ($$pages pages)"; \
+		if [ "$$pages" != "unknown" ] && [ "$$pages" != "" ] && [ $$pages -le 20 ]; then \
+			echo "✓ Page limit: $$pages/20 pages (WITHIN LIMIT)"; \
+		elif [ "$$pages" != "unknown" ] && [ "$$pages" != "" ]; then \
+			echo "✗ Page limit: $$pages/20 pages (EXCEEDS LIMIT)"; \
+		else \
+			echo "? Page limit: Unable to determine page count"; \
+		fi; \
+	elif [ -f "$(INTEGRATED).pdf" ]; then \
 		if command -v pdfinfo > /dev/null 2>&1; then \
 			pages=$$(pdfinfo "$(INTEGRATED).pdf" 2>/dev/null | grep Pages | awk '{print $$2}'); \
 		elif command -v mdls > /dev/null 2>&1; then \
@@ -131,13 +182,20 @@ validate:
 			echo "? Page limit: Unable to determine page count"; \
 		fi; \
 	else \
-		echo "✗ No integrated paper found. Run 'make integrated' first."; \
+		echo "✗ No paper found. Run 'make main' or 'make integrated' first."; \
 	fi
 	@echo
-	@grep -q "highlights" $(INTEGRATED).tex 2>/dev/null && echo "✓ Highlights section found" || echo "✗ Highlights section missing"
-	@grep -q "CRediT" $(INTEGRATED).tex 2>/dev/null && echo "✓ CRediT section found" || echo "✗ CRediT section missing"
-	@grep -q "Declaration of competing interests" $(INTEGRATED).tex 2>/dev/null && echo "✓ Competing interests declaration found" || echo "✗ Competing interests declaration missing"
-	@grep -q "Data availability" $(INTEGRATED).tex 2>/dev/null && echo "✓ Data availability statement found" || echo "✗ Data availability statement missing"
+	@if [ -f "$(MAIN).tex" ]; then \
+		grep -q "highlights" $(MAIN).tex 2>/dev/null && echo "✓ Highlights section found" || echo "✗ Highlights section missing"; \
+		grep -q "CRediT" $(MAIN).tex 2>/dev/null && echo "✓ CRediT section found" || echo "✗ CRediT section missing"; \
+		grep -q "Declaration of competing interests" $(MAIN).tex 2>/dev/null && echo "✓ Competing interests declaration found" || echo "✗ Competing interests declaration missing"; \
+		grep -q "Data availability" $(MAIN).tex 2>/dev/null && echo "✓ Data availability statement found" || echo "✗ Data availability statement missing"; \
+	elif [ -f "$(INTEGRATED).tex" ]; then \
+		grep -q "highlights" $(INTEGRATED).tex 2>/dev/null && echo "✓ Highlights section found" || echo "✗ Highlights section missing"; \
+		grep -q "CRediT" $(INTEGRATED).tex 2>/dev/null && echo "✓ CRediT section found" || echo "✗ CRediT section missing"; \
+		grep -q "Declaration of competing interests" $(INTEGRATED).tex 2>/dev/null && echo "✓ Competing interests declaration found" || echo "✗ Competing interests declaration missing"; \
+		grep -q "Data availability" $(INTEGRATED).tex 2>/dev/null && echo "✓ Data availability statement found" || echo "✗ Data availability statement missing"; \
+	fi
 
 # Archive for submission
 archive: $(INTEGRATED).pdf
@@ -184,15 +242,19 @@ help:
 	@echo "====================="
 	@echo
 	@echo "Main Targets:"
-	@echo "  all, integrated  - Build integrated KBS paper (default)"
-	@echo "  template        - Build basic KBS template"
+	@echo "  all, main       - Build main KBS paper (forced rebuild)"
+	@echo "  build           - Build main KBS paper (forced rebuild)"
+	@echo "  main-check      - Build main KBS paper (only if needed)"
+	@echo "  template        - Build basic KBS template (forced rebuild)"
+	@echo "  integrated      - Build integrated KBS paper (via extraction)"
 	@echo "  extract         - Extract content from IEEE source"
 	@echo "  highlights      - Build highlights document"
 	@echo
 	@echo "Development:"
-	@echo "  dev             - Full development workflow"
+	@echo "  dev             - Full development workflow (integrated)"
 	@echo "  rebuild         - Force re-extraction and rebuild"
-	@echo "  quick           - Quick compile (no bibtex)"
+	@echo "  quick           - Quick compile main paper (no bibtex)"
+	@echo "  quick-main      - Quick compile main paper (no bibtex)"
 	@echo
 	@echo "Utilities:"
 	@echo "  status          - Show paper status and files"
@@ -216,6 +278,6 @@ help:
 .PRECIOUS: $(EXTRACTED_DIR) $(INTEGRATED).tex
 
 # Declare phony targets
-.PHONY: all template integrated extract rebuild highlights quick quick-template
+.PHONY: all main build main-check template integrated extract rebuild highlights quick quick-template
 .PHONY: view view-template view-highlights status pages validate archive dev
 .PHONY: clean clean-extract clean-all help
