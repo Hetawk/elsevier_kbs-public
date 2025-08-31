@@ -141,27 +141,21 @@ Adversarial Resilience \sep Medical Imaging \sep Defense-Aware Attention Mechani
 \section{Introduction}
 \label{sec:introduction}
 
-Deep neural networks have revolutionized medical imaging analysis, achieving unprecedented diagnostic accuracy across various conditions~\cite{Mamo24}. While these systems approach or exceed human-level performance in specialized tasks, they remain vulnerable to adversarial attacks; imperceptible perturbations that cause incorrect predictions with potentially serious clinical consequences~\cite{Bortsova21, Kaviani22}.
+Deep neural networks have revolutionized medical imaging analysis, achieving unprecedented diagnostic accuracy across various conditions\cite{Mamo24}. While these systems approach or exceed human-level performance in specialized tasks, they remain vulnerable to adversarial attacks; imperceptible perturbations that cause incorrect predictions with potentially serious clinical consequences \cite{Bortsova21, Kaviani22}.
 
-Current defense strategies fall into several areas, which can be categorically grouped into three: (1) input preprocessing techniques (denoising~\cite{Chiang20}, JPEG compression~\cite{Cheng21}) that neutralize perturbations; (2) model regularization approaches like adversarial training~\cite{Muoka23} that improve robustness; and (3) architectural modifications (defensive distillation~\cite{Qi24}, feature squeezing~\cite{vasan2024}, ensemble methods~\cite{Alzubaidi24}) that detect or mitigate adversarial inputs. The success of these methods is, however, constrained by the particular difficulties associated with medical imaging. Research shows adversarial training reduced classification accuracy for subtle pathological features by 8-12\%~\cite{Sriramanan21}, while preprocessing techniques decreased sensitivity to critical diagnostic signals by up to 14\%~\cite{Suganyadevi22}. Comparative studies across modalities revealed state-of-the-art defenses reduce clear image performance by 5-16\%~\cite{Rodriguez22}, highlighting an unacceptable robustness-accuracy tradeoff.
+Current defense strategies fall into several areas, which can be categorically grouped into three: (1) input preprocessing techniques (denoising\cite{Chiang20}, JPEG compression\cite{Cheng21}) that neutralize perturbations; (2) model regularization approaches like adversarial training\cite{Muoka23} that improve robustness; and (3) architectural modifications (defensive distillation\cite{Qi24}, feature squeezing\cite{vasan2024}, ensemble methods\cite{Alzubaidi24}) that detect or mitigate adversarial inputs. The success of these methods is, however, constrained by the particular difficulties associated with medical imaging. Research shows adversarial training reduced classification accuracy for subtle pathological features by 8-12\%\cite{Sriramanan21}, while preprocessing techniques decreased sensitivity to critical diagnostic signals by up to 14\%\cite{Suganyadevi22}. Comparative studies across modalities revealed state-of-the-art defenses reduce clear image performance by 5-16\% \cite{Rodriguez22}, highlighting an unacceptable robustness-accuracy tradeoff.
 
-Three critical challenges emerge in medical imaging defense that directly motivate our DAAM design: 
+Three critical challenges emerge in medical imaging defense: First, diagnostic features are often subtle and localized in small regions that preprocessing techniques inadvertently suppress\cite{Chiang20}, while high intra-class variability complicates adversarial training. Second, due to the asymmetric cost of errors, where false negatives could be fatal, it is necessary to maintain high sensitivity while improving robustness. Dermatology research showed that feature squeezing increased robustness by 23\% but reduced the sensitivity of early melanoma detection by 17\%\cite{Sahu24}.Third, conventional defenses treat robustness as competing with accuracy rather than integrating defensive capabilities into feature learning, creating vulnerabilities that sophisticated attacks exploit\cite{Sriramanan21}.
 
-\textbf{Challenge 1: Noise Suppression vs. Feature Preservation.} Preprocessing procedures typically suppress delicate, localized textures and patterns that constitute diagnostic features in medical images~\cite{Chiang20}. Early retinal pathology, for example, shows up as microscopic alterations in the thickness of the photoreceptor layer, whereas antagonistic perturbations take advantage of comparable high-frequency features. Our Adversarial Feature Detection (AFD) component targets noise patterns while maintaining diagnostic subtleties because a defense mechanism that can distinguish between adversarial noise and medically relevant fine-grained characteristics is required.
-
-\textbf{Challenge 2: Vulnerability Dependent on Scale.} From cellular-level anomalies to organ-level structural alterations, medical pictures provide diagnostically important information at several spatial dimensions. By focusing on particular resolution levels where defenses are weakest, adversarial attacks take advantage of this multi-scale nature~\cite{Sahu24}. Research in dermatology showed that feature squeezing improved robustness by 23\% but decreased the sensitivity of early melanoma detection by 17\%, emphasizing the necessity of scale-aware protection. Our Multi-Scale Feature Analysis (MSF) component is directly motivated by this to offer coordinated defense across all pertinent spatial resolutions.
-
-\textbf{Challenge 3: Robustness Requirements Specific to Domains.} Anatomically significant characteristics (edges, textures, morphological patterns) that differentiate healthy tissue from diseased tissue must be preserved for medical imaging. Instead of using medical domain knowledge, conventional defenses treat robustness as a rival to accuracy~\cite{Sriramanan21}. This drives our Medical Feature Extraction (MFE) component, which suppresses adversarial perturbations while explicitly enhancing diagnostically significant anatomical characteristics.
-
-To tackle adversarial vulnerabilities in medical imaging, we propose MedDef, a framework built around a Defense-Aware Attention Mechanism (DAAM) that integrates defense directly into feature processing. DAAM comprises three components: Adversarial Feature Detection (AFD), which suppresses high-frequency adversarial noise while preserving fine-grained diagnostic features; Medical Feature Extraction (MFE), which enhances edge and texture cues using domain knowledge; and Multi-Scale Feature Analysis (MSF), which defends across spatial resolutions to maintain robust hierarchical representations. These modules are unified through self-attention that dynamically adjusts feature relevance, enabling DAAM to focus on diagnostically important regions while mitigating attacks. Combined with unstructured pruning, MedDef yields a compact, resilient architecture.
+To address these challenges, we introduce MedDef, featuring a Defense-Aware Attention Mechanism (DAAM) that integrates defensive capabilities directly into the feature processing pipeline. By using self-attention modules that dynamically modify feature relevance based on spatial and channel-wise relationship, DAAM suppresses adversarial perturbations while improving focus on diagnostically significant regions. This mechanism works in concert with unstructured pruning that preserves critical diagnostic pathways while eliminating vulnerabilities, creating a more compact and robust architecture\cite{Liebenwein21}.
 
 Our contributions include:
 \begin{enumerate}
-    \item \textbf{Principled DAAM Architecture:} A novel Defense-Aware Attention Mechanism that integrates adversarial robustness directly into feature extraction through three synergistic components (AFD, MFE, MSF), each specifically designed to address distinct vulnerabilities in medical adversarial defense. In contrast to post-hoc defenses, DAAM essentially changes the way features are processed in order to optimize both adversary robustness and diagnostic accuracy at the same time.
+    \item A novel DAAM that integrates adversarial robustness directly into feature extraction, addressing vulnerability at the architectural level rather than through post-hoc defenses.
     
-    \item \textbf{Medical Domain-Aware Defensive Strategy:} In order to guarantee that defensive capabilities improve rather than degrade diagnostic performance, this defensive strategy is the first to specifically integrate medical imaging domain knowledge (edge detection, texture analysis, and multi-scale pathology) into adversarial defense mechanisms. Our MFE component demonstrates that domain-specific feature enhancement can serve as an effective defensive strategy.
+    \item Demonstration that properly calibrated unstructured pruning serves as an effective defensive strategy with dataset-specific optimal thresholds, providing practical guidelines for deploying efficient yet robust models across different medical domains.
     
-    \item \textbf{Compression-Security Synergy:} Strategic unstructured pruning was found to be an efficient defensive tactic that counters the widely held belief that robustness is weakened by compression. Our thorough investigation of pruning rates ranging from 0 to 80\% indicates optimal compression points that vary by dataset: Chest X-Ray models achieve peak performance at 40\% pruning (98.38\% vs 97.67\% unpruned), while ROCT models maintain optimal performance up to 30\% pruning without degradation. This finding establishes that the compression-security relationship is not universally antagonistic but can be leveraged as a defensive mechanism when properly calibrated for medical imaging domains.
+    \item Identification of a critical threshold phenomenon where defensive capabilities suddenly collapse at specific pruning rates. This finding reveals important insights about the relationship between model compression and adversarial resilience, demonstrating significant improvements in adversarial accuracy without compromising clean image performance.
 \end{enumerate}
 
 \section{Related Work}
@@ -604,25 +598,13 @@ In conclusion, this research demonstrates that targeted defensive mechanisms sig
 \section*{Acknowledgments}
 This research was supported by the National Natural Science Foundation of China (Grant No. 62471202, 62302191), the Natural Science Foundation of Shandong Province (Grant No. ZR2023QF001), Development Program Project of Youth Innovation Team of Institutions of Higher Learning in Shandong Province (Grant No. 2023KJ315), Young Talent of Lifting Engineering for Science and Technology in Shandong (Grant No. SDAST2024QTA014), and the Key Laboratory of Intelligent Computing Technology for Network Environment, Shandong Province, School of Information Science and Engineering, University of Jinan.
 
-%% CRediT authorship contribution statement (required for KBS)
-\section*{CRediT authorship contribution statement}
-\textbf{E.K. Dongbo:} Conceptualization, Methodology, Software, Validation, Formal analysis, Investigation, Writing – original draft, Writing – review \& editing, Visualization.
-\textbf{S. Niu:} Conceptualization, Methodology, Supervision, Project administration, Funding acquisition, Writing – review \& editing.
-\textbf{P. Fero:} Methodology, Validation, Investigation, Writing – review \& editing.
-\textbf{P. Bargin:} Data curation, Resources, Investigation.
-\textbf{J.N. Kofa:} Formal analysis, Investigation, Writing – review \& editing.
-
-%% Declaration of competing interests (required for KBS)
-\section*{Declaration of competing interests}
-The authors declare that they have no known competing financial interests or personal relationships that could have appeared to influence the work reported in this paper.
-
 %% Data availability statement (required for KBS)
-\section*{Data availability}
-The datasets used in this study are publicly available: Retinal OCT dataset and Chest X-Ray dataset. Code and additional materials will be made available upon reasonable request.
-
-%% Funding statement (required for KBS)
-\section*{Funding}
-This work was supported by the National Natural Science Foundation of China [grant numbers 62471202, 62302191]; the Natural Science Foundation of Shandong Province [grant number ZR2023QF001]; Development Program Project of Youth Innovation Team of Institutions of Higher Learning in Shandong Province [grant number 2023KJ315]; Young Talent of Lifting Engineering for Science and Technology in Shandong [grant number SDAST2024QTA014]; and the Key Laboratory of Intelligent Computing Technology for Network Environment, Shandong Province.
+\section*{Data Availability}
+This study utilized two publicly available datasets for medical image classification tasks:
+\begin{enumerate}
+\item Retinal OCT Images (optical coherence tomography): Available from Kermany et al. (2018) via Kaggle at \url{https://www.kaggle.com/datasets/paultimothymooney/kermany2018}.
+\item Chest X-Ray Images (Pneumonia): Available via Kaggle at \url{https://www.kaggle.com/datasets/paultimothymooney/chest-xray-pneumonia}.
+\end{enumerate}
 
 %% For citations use: 
 %% \cite{<label>} ==> [1]
