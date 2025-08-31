@@ -24,6 +24,9 @@ main:
 	pdflatex $(MAIN)
 	@echo "Paper built: $(MAIN).pdf"
 
+# Build PDF (alias for main target)
+pdf: main
+
 # Build main paper directly (alternative target name) - force rebuild
 build:
 	@echo "Building KBS paper (forced rebuild)..."
@@ -244,6 +247,7 @@ help:
 	@echo "Main Targets:"
 	@echo "  all, main       - Build main KBS paper (forced rebuild)"
 	@echo "  build           - Build main KBS paper (forced rebuild)"
+	@echo "  pdf             - Build main KBS paper (alias for main)"
 	@echo "  main-check      - Build main KBS paper (only if needed)"
 	@echo "  template        - Build basic KBS template (forced rebuild)"
 	@echo "  integrated      - Build integrated KBS paper (via extraction)"
@@ -278,6 +282,6 @@ help:
 .PRECIOUS: $(EXTRACTED_DIR) $(INTEGRATED).tex
 
 # Declare phony targets
-.PHONY: all main build main-check template integrated extract rebuild highlights quick quick-template
+.PHONY: all main build main-check template integrated extract rebuild highlights quick quick-template pdf
 .PHONY: view view-template view-highlights status pages validate archive dev
 .PHONY: clean clean-extract clean-all help
