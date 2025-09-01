@@ -2,7 +2,20 @@
 
 This repository contains the LaTeX source for "MedDef: An Efficient Self-Attention Model for Adversarial Resilience in Medical Imaging with Unstructured Pruning" - a research paper submitted to Knowledge-Based Systems journal.
 
-## 📁 Project Structure
+## � **Public Repository Access**
+
+> **📂 Complete Project Download:**  
+> **🌐 [https://github.com/Hetawk/elsevier_kbs-public.git](https://github.com/Hetawk/elsevier_kbs-public.git)**
+>
+> **Quick Clone:**
+>
+> ```bash
+> git clone https://github.com/Hetawk/elsevier_kbs-public.git
+> cd elsevier_kbs-public
+> make main  # Build the paper
+> ```
+
+## �📁 Project Structure
 
 ```
 ├── main.tex                    # Main manuscript (with author information)
