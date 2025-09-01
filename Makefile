@@ -115,6 +115,73 @@ highlights.pdf: highlights.tex
 	pdflatex highlights
 	@echo "Highlights built: highlights.pdf"
 
+# Build supporting documents for submission
+supporting: author-agreement cover-letter declaration-interests
+	@echo "All supporting documents built successfully!"
+
+# Build author agreement document - force rebuild
+author-agreement:
+	@echo "Building author agreement document (forced rebuild)..."
+	pdflatex author_agreement
+	@echo "Author agreement built: author_agreement.pdf"
+
+# Build author agreement with dependency checking
+author-agreement-check: author_agreement.pdf
+
+author_agreement.pdf: author_agreement.tex
+	@echo "Building author agreement document (dependency-based)..."
+	pdflatex author_agreement
+	@echo "Author agreement built: author_agreement.pdf"
+
+# Build cover letter document - force rebuild
+cover-letter:
+	@echo "Building cover letter document (forced rebuild)..."
+	pdflatex cover_letter
+	@echo "Cover letter built: cover_letter.pdf"
+
+# Build cover letter with dependency checking
+cover-letter-check: cover_letter.pdf
+
+cover_letter.pdf: cover_letter.tex
+	@echo "Building cover letter document (dependency-based)..."
+	pdflatex cover_letter
+	@echo "Cover letter built: cover_letter.pdf"
+
+# Build declaration of interests document - force rebuild
+declaration-interests:
+	@echo "Building declaration of interests document (forced rebuild)..."
+	pdflatex declaration_interests
+	@echo "Declaration of interests built: declaration_interests.pdf"
+
+# Build declaration of interests with dependency checking
+declaration-interests-check: declaration_interests.pdf
+
+declaration_interests.pdf: declaration_interests.tex
+	@echo "Building declaration of interests document (dependency-based)..."
+	pdflatex declaration_interests
+	@echo "Declaration of interests built: declaration_interests.pdf"
+
+# Build all submission documents (combined command)
+submission-package: main anonymous highlights supporting
+	@echo "Complete submission package built:"
+	@echo "  ✓ main.pdf - Complete manuscript"
+	@echo "  ✓ main_anonymous.pdf - Anonymized manuscript"
+	@echo "  ✓ highlights.pdf - Research highlights"
+	@echo "  ✓ author_agreement.pdf - Author agreement"
+	@echo "  ✓ cover_letter.pdf - Cover letter"
+	@echo "  ✓ declaration_interests.pdf - Declaration of interests"
+	@echo "All documents ready for Knowledge-Based Systems submission!"
+
+# View supporting documents
+view-author-agreement: author_agreement.pdf
+	open author_agreement.pdf
+
+view-cover-letter: cover_letter.pdf
+	open cover_letter.pdf
+
+view-declaration-interests: declaration_interests.pdf
+	open declaration_interests.pdf
+
 # Quick compile without bibliography
 quick:
 	@echo "Quick compile of main paper..."
@@ -299,6 +366,13 @@ help:
 	@echo "  extract         - Extract content from IEEE source"
 	@echo "  highlights      - Build highlights document (forced rebuild)"
 	@echo "  highlights-check - Build highlights document (only if needed)"
+	@echo
+	@echo "Supporting Documents:"
+	@echo "  supporting      - Build all supporting documents"
+	@echo "  author-agreement - Build author agreement document"
+	@echo "  cover-letter    - Build cover letter document"
+	@echo "  declaration-interests - Build declaration of interests document"
+	@echo "  submission-package - Build complete submission package"
 	@echo
 	@echo "Development:"
 	@echo "  dev             - Full development workflow (integrated)"
