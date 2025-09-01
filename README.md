@@ -230,10 +230,6 @@ For journal submission, the complete package includes:
 - `highlights.pdf` - Research highlights
 - Source files and bibliography
 
-## 🔄 Version Control
-
-This project uses Git for version control. All major manuscript versions are tracked with proper commit messages for revision history.
-
 ---
 
 **Contact**: For questions about the build system or document structure, refer to the corresponding author information in the manuscript.
