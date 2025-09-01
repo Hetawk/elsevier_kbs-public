@@ -7,6 +7,7 @@
 %% Template article for Elsevier's document class `elsarticle'
 %% with numbered style bibliographic references
 %% Adapted for Knowledge-Based Systems journal submission
+%% ANONYMIZED VERSION FOR DOUBLE-BLIND REVIEW
 %% 
 \documentclass[preprint,12pt]{elsarticle}
 
@@ -65,45 +66,7 @@
 
 \title{MedDef: An Efficient Self-Attention Model for Adversarial Resilience in Medical Imaging with Unstructured Pruning}
 
-%% use optional labels to link authors explicitly to addresses:
-%% \author[label1,label2]{}
-%% \affiliation[label1]{organization={},
-%%             addressline={},
-%%             city={},
-%%             postcode={},
-%%             state={},
-%%             country={}}
-
-\author[a]{E.K. Dongbo}
-\author[a]{S. Niu\corref{cor1}}
-\ead{sjniu@hotmail.com}
-\author[b]{P. Fero}
-\author[b]{P. Bargin}
-\author[c]{J.N. Kofa}
-
-%% Author affiliations
-\affiliation[a]{organization={School of Information Science and Engineering, University of Jinan},
-            addressline={}, 
-            city={Jinan},
-            postcode={250022}, 
-            state={Shandong},
-            country={P.R. China}}
-
-\affiliation[b]{organization={School of Computer Science \& Technology, Zhejiang Sci-Tech University},
-            addressline={}, 
-            city={Hangzhou},
-            postcode={310018}, 
-            state={},
-            country={P.R. China}}
-
-\affiliation[c]{organization={College of Informatics, Huazhong Agricultural University},
-            addressline={}, 
-            city={Wuhan},
-            postcode={430070}, 
-            state={},
-            country={P.R. China}}
-
-\cortext[cor1]{Corresponding author}
+%% ANONYMIZED FOR DOUBLE-BLIND REVIEW - NO AUTHOR INFORMATION
 
 %% Abstract (max 250 words)
 \begin{abstract}
@@ -199,23 +162,7 @@ and 624 test images (234 NORMAL, 390 PNEUMONIA), with significant dimension \\
 variability (976×544 to 1994×1839) and inconsistent color channels. Both datasets showed variability in image quality, brightness, and contrast that required addressing.
 
 \subsubsection{Preprocessing}
-The preprocessing pipeline standardized both datasets by resizing images to 224×224 pixels with aspect-preserving padding and converting grayscale to three-channel format. For ROCT, we applied min-max scaling to [0,1] followed by standardization with mean [0.19338988] and standard deviation [0.1933612] across channels\cite{Elgendi21}, then enhanced contrast using CLAHE and adjusted brightness. The Chest X-Ray dataset underwent similar resizing and channel conversion, with normalization using dataset-specific mean [0.48230693] and standard deviation [0.22157896] values. We implemented denoising to improve image clarity and removed duplicates (24 identified in the Chest X-Ray dataset) to prevent data leakage\cite{Khalifa22}. These steps ensured consistently formatted, noise-free images with preserved diagnostic features essential for accurate classification\cite{Puttagunta21}. Fig~\ref{fig:dataset_samples} shows a sample of each dataset.
-
-\begin{figure}[!t]
-\centering
-\begin{subfigure}[b]{\columnwidth}
-\centering
-\includegraphics[width=0.8\columnwidth]{fig/fig1_a.png}
-\caption{Retinal OCT Samples.}
-\end{subfigure}
-\begin{subfigure}[b]{\columnwidth}
-\centering
-\includegraphics[width=0.8\columnwidth]{fig/fig1_b.png}
-\caption{Chest X-Ray Samples.}
-\end{subfigure}
-\caption{Sample images from the two datasets used in this study.}
-\label{fig:dataset_samples}
-\end{figure}
+All images underwent standardized preprocessing: (1) resizing to 224×224 pixels for architectural consistency and computational efficiency, (2) normalization to the range [0, 1] to standardize input distributions, and (3) RGB channel replication for grayscale images to ensure uniform input format across datasets.
 
 \subsection{Proposed Model Architecture and Training Method}
 
@@ -239,14 +186,10 @@ In medical imaging, where even little attacks can result in incorrect diagnoses,
 \end{figure}
 
 \subsection{Defense-Aware Attention Mechanism (DAAM)}
-The core innovation from our experiment is the Defense-Aware Attention Mechanism (DAAM), which integrates self-attention with defense-aware feature processing and a ResNet backbone to achieve robust defense against adversarial attacks while maintaining high diagnostic accuracy\cite{Bello19}.
+The Defense-Aware Attention Mechanism integrates adversarial robustness directly into feature extraction, addressing vulnerability at the architectural level through three specialized components working in coordination.
 
-\subsubsection{Self-Attention}
-At the heart of our model is a self-attention mechanism that dynamically refines feature representations by establishing direct, global dependencies among all spatial locations~\cite{Xu21}. Given an input feature map $X \in \mathbb{R}^{N \times d}$, the model computes query, key, and value matrices as follows:
-\begin{equation}
-Q = XW_q, \quad K = XW_k, \quad V = XW_v
-\end{equation}
-where $W_q$, $W_k$, and $W_v$ are learnable projection matrices, and $d_k$ denote the dimension of the key vectors. The attention operation is then defined by the scaled dot-product:
+\subsubsection{Self-Attention Framework}
+Our self-attention implementation employs the scaled dot-product attention mechanism:
 \begin{equation}
 A(Q, K, V) = \text{softmax}\left(\frac{QK^T}{\sqrt{d_k}}\right)V
 \end{equation}
@@ -396,6 +339,15 @@ MedDef variants show progressive improvement as defensive components are added, 
 
 The epsilon analysis validates MedDef's clinical applicability by demonstrating robust performance across perturbation magnitudes that could realistically occur in clinical imaging environments due to acquisition variability, preprocessing artifacts, or potential adversarial interference.
 
+\subsection{Compression-Security Trade-off Analysis}
+This analysis examines the critical relationship between model compression and adversarial robustness. We evaluate attack success rates across different pruning levels to identify optimal compression-security balance points. The results reveal dataset-dependent patterns where moderate pruning can actually enhance security while maintaining efficiency, with models showing improved robustness characteristics compared to unpruned versions at specific compression levels. MedDef consistently demonstrates superior performance across all pruning levels, with optimal security-compression balance varying by dataset: ROCT maintains peak performance through 20-30\% pruning, while Chest X-Ray achieves optimal results at 40-50\% pruning rates.
+
+The compression-security analysis reveals counterintuitive findings that challenge conventional assumptions about the robustness-compression trade-off in medical imaging. Rather than universally degrading defensive performance, strategic pruning at moderate levels (20-40\%) can actually enhance robustness while reducing computational overhead. This phenomenon is particularly evident in the Chest X-Ray dataset, where MedDef Full DAAM maintains superior defensive performance even at 70-80\% pruning rates, achieving near-zero attack success rates across multiple attack types.
+
+The optimal compression points vary significantly by dataset characteristics: ROCT models, with their high-resolution retinal features, maintain peak defensive performance through 30\% pruning before gradual degradation, while Chest X-Ray models show enhanced robustness at 40-50\% pruning levels. This dataset-dependent optimization suggests that pruning strategies should be calibrated based on the specific anatomical domain and pathological feature complexity.
+
+Notably, the compression-security analysis demonstrates that MedDef's defensive architecture remains robust even under severe compression (70-80\%), maintaining clinical viability while achieving substantial computational savings. This finding has significant implications for deployment in resource-constrained clinical environments where computational efficiency is paramount.
+
 \begin{table}[!t]
 \caption{ATTACK INTENSITY ANALYSIS: MODEL PERFORMANCE ACCURACY (\%) ACROSS DIFFERENT EPSILON VALUES ON ROCT DATASET. BOLD VALUES INDICATE BEST PERFORMANCE.}
 \label{tab:roct_epsilon_analysis}
@@ -463,15 +415,6 @@ The epsilon analysis validates MedDef's clinical applicability by demonstrating 
 \end{tabular}%
 }
 \end{table}
-
-\subsection{Compression-Security Trade-off Analysis}
-This analysis examines the critical relationship between model compression and adversarial robustness. We evaluate attack success rates across different pruning levels to identify optimal compression-security balance points. The results reveal dataset-dependent patterns where moderate pruning can actually enhance security while maintaining efficiency, with models showing improved robustness characteristics compared to unpruned versions at specific compression levels. MedDef consistently demonstrates superior performance across all pruning levels, with optimal security-compression balance varying by dataset: ROCT maintains peak performance through 20-30\% pruning, while Chest X-Ray achieves optimal results at 40-50\% pruning rates.
-
-The compression-security analysis reveals counterintuitive findings that challenge conventional assumptions about the robustness-compression trade-off in medical imaging. Rather than universally degrading defensive performance, strategic pruning at moderate levels (20-40\%) can actually enhance robustness while reducing computational overhead. This phenomenon is particularly evident in the Chest X-Ray dataset, where MedDef Full DAAM maintains superior defensive performance even at 70-80\% pruning rates, achieving near-zero attack success rates across multiple attack types.
-
-The optimal compression points vary significantly by dataset characteristics: ROCT models, with their high-resolution retinal features, maintain peak defensive performance through 30\% pruning before gradual degradation, while Chest X-Ray models show enhanced robustness at 40-50\% pruning levels. This dataset-dependent optimization suggests that pruning strategies should be calibrated based on the specific anatomical domain and pathological feature complexity.
-
-Notably, the compression-security analysis demonstrates that MedDef's defensive architecture remains robust even under severe compression (70-80\%), maintaining clinical viability while achieving substantial computational savings. This finding has significant implications for deployment in resource-constrained clinical environments where computational efficiency is paramount.
 
 \begin{table}[!t]
 \caption{ATTACK SUCCESS RATES VS. MODEL PRUNING LEVELS ON ROCT DATASET. BOLD VALUES INDICATE BEST DEFENSIVE PERFORMANCE.}
@@ -542,11 +485,11 @@ Notably, the compression-security analysis demonstrates that MedDef's defensive 
 \end{table}
 
 \subsection{State-of-the-Art Comparison}
-To demonstrate MedDef's effectiveness, we present a focused comparison with representative adversarial defense methods in medical imaging. Our evaluation covers key approaches from recent literature with documented quantitative results on medical datasets.
+To position MedDef within the broader landscape of adversarial defense research, we conducted comprehensive comparisons with existing approaches across key performance metrics. Table~\ref{table:sota} presents comparative analysis with recent defense methods, emphasizing attack success rates (ASR) as the primary robustness metric.
 
 \begin{table}[!t]
-\caption{COMPARISON WITH STATE-OF-THE-ART ADVERSARIAL DEFENSE METHODS IN MEDICAL IMAGING}
-\label{tab:sota_comparison}
+\caption{STATE-OF-THE-ART COMPARISON: MEDDEF PERFORMANCE AGAINST EXISTING ADVERSARIAL DEFENSE METHODS IN MEDICAL IMAGING. ASR = ATTACK SUCCESS RATE (LOWER IS BETTER).}
+\label{table:sota}
 \centering
 \renewcommand{\arraystretch}{1.2}
 \resizebox{\columnwidth}{!}{%
@@ -613,9 +556,8 @@ Future work will focus on: integrating diagnostic-aware defense with clinical fe
 \subsection{Conclusion}
 In conclusion, this research demonstrates that targeted defensive mechanisms significantly outperform conventional architectures in adversarial medical imaging environments. The Defense-Aware Attention Mechanism achieves substantial reductions in attack success rates compared to standard models while maintaining diagnostic accuracy. Our comprehensive evaluation across different pruning levels demonstrates MedDef's robustness and efficiency across various deployment scenarios. By establishing that adversarial robustness and clinical accuracy can be simultaneously optimized, MedDef creates a foundation for trustworthy AI diagnostic systems resistant to manipulation.
 
-%% Acknowledgments section
-\section*{Acknowledgments}
-This research was supported by the National Natural Science Foundation of China (Grant No. 62471202, 62302191), the Natural Science Foundation of Shandong Province (Grant No. ZR2023QF001), Development Program Project of Youth Innovation Team of Institutions of Higher Learning in Shandong Province (Grant No. 2023KJ315), Young Talent of Lifting Engineering for Science and Technology in Shandong (Grant No. SDAST2024QTA014), and the Key Laboratory of Intelligent Computing Technology for Network Environment, Shandong Province, School of Information Science and Engineering, University of Jinan.
+%% Acknowledgments section - ANONYMIZED FOR DOUBLE-BLIND REVIEW
+%% Acknowledgments removed for double-blind review
 
 %% Data availability statement (required for KBS)
 \section*{Data Availability}
@@ -627,9 +569,8 @@ This study utilized two publicly available datasets for medical image classifica
 \url{https://www.kaggle.com/datasets/paultimothymooney/chest-xray-pneumonia}.
 \end{enumerate}
 
-%% Declaration of interests (required for KBS)
-\section*{Declaration of Interests}
-The authors declare the following financial interests/personal relationships which may be considered as potential competing interests: S. Niu reports financial support was provided by National Natural Science Foundation of China. S. Niu reports financial support was provided by Natural Science Foundation of Shandong Province. S. Niu reports financial support was provided by Development Program Project of Youth Innovation Team of Institutions of Higher Learning in Shandong Province. S. Niu reports financial support was provided by Young Talent of Lifting Engineering for Science and Technology in Shandong. S. Niu reports a relationship with Key Laboratory of Intelligent Computing Technology for Network Environment, Shandong Province, School of Information Science and Engineering, University of Jinan that includes: funding grants. If there are other authors, they declare that they have no known competing financial interests or personal relationships that could have appeared to influence the work reported in this paper.
+%% Declaration of interests section - ANONYMIZED FOR DOUBLE-BLIND REVIEW
+%% Declaration of interests removed for double-blind review
 
 %% For citations use: 
 %% \cite{<label>} ==> [1]

@@ -3,6 +3,7 @@
 
 # Configuration
 MAIN = main
+ANONYMOUS = main_anonymous
 INTEGRATED = main_integrated
 SOURCE_PAPER = to_be_reference/full_tmi.tex
 BIB = ref/references
@@ -26,6 +27,26 @@ main:
 
 # Build PDF (alias for main target)
 pdf: main
+
+# Build anonymized paper for double-blind review - force rebuild
+anonymous:
+	@echo "Building anonymized KBS paper for double-blind review (forced rebuild)..."
+	pdflatex $(ANONYMOUS)
+	-bibtex $(ANONYMOUS) 2>/dev/null || true
+	pdflatex $(ANONYMOUS)
+	pdflatex $(ANONYMOUS)
+	@echo "Anonymized paper built: $(ANONYMOUS).pdf"
+
+# Build anonymized paper with dependency checking (only rebuild if needed)
+anonymous-check: $(ANONYMOUS).pdf
+
+$(ANONYMOUS).pdf: $(ANONYMOUS).tex
+	@echo "Building anonymized KBS paper (dependency-based)..."
+	pdflatex $(ANONYMOUS)
+	-bibtex $(ANONYMOUS) 2>/dev/null || true
+	pdflatex $(ANONYMOUS)
+	pdflatex $(ANONYMOUS)
+	@echo "Anonymized paper built: $(ANONYMOUS).pdf"
 
 # Build main paper directly (alternative target name) - force rebuild
 build:
@@ -80,11 +101,17 @@ $(INTEGRATED).pdf: $(INTEGRATE_SCRIPT) $(EXTRACTED_DIR)
 # Force re-extraction and integration
 rebuild: clean-extract integrated
 
-# Build highlights document
-highlights: highlights.pdf
+# Build highlights document - force rebuild
+highlights:
+	@echo "Building highlights document (forced rebuild)..."
+	pdflatex highlights
+	@echo "Highlights built: highlights.pdf"
+
+# Build highlights with dependency checking (only rebuild if needed)
+highlights-check: highlights.pdf
 
 highlights.pdf: highlights.tex
-	@echo "Building highlights document..."
+	@echo "Building highlights document (dependency-based)..."
 	pdflatex highlights
 	@echo "Highlights built: highlights.pdf"
 
@@ -96,6 +123,10 @@ quick:
 quick-main:
 	@echo "Quick compile of main paper..."
 	pdflatex $(MAIN)
+
+quick-anonymous:
+	@echo "Quick compile of anonymized paper..."
+	pdflatex $(ANONYMOUS)
 
 quick-integrated:
 	@echo "Quick compile of integrated paper..."
@@ -109,6 +140,12 @@ quick-template:
 view: $(INTEGRATED).pdf
 	open $(INTEGRATED).pdf
 
+view-main: $(MAIN).pdf
+	open $(MAIN).pdf
+
+view-anonymous: $(ANONYMOUS).pdf
+	open $(ANONYMOUS).pdf
+
 view-template: $(MAIN).pdf
 	open $(MAIN).pdf
 
@@ -118,6 +155,8 @@ view-highlights: highlights.pdf
 # Check paper status
 status:
 	@echo "=== KBS Paper Status ==="
+	@echo "Main file: $(MAIN).tex"
+	@echo "Anonymous file: $(ANONYMOUS).tex"
 	@echo "Template file: $(MAIN).tex"
 	@echo "Integrated file: $(INTEGRATED).tex"
 	@echo "Source paper: $(SOURCE_PAPER)"
@@ -201,14 +240,18 @@ validate:
 	fi
 
 # Archive for submission
-archive: $(INTEGRATED).pdf
+archive: $(MAIN).pdf $(ANONYMOUS).pdf
 	@echo "Creating submission archive..."
 	@mkdir -p kbs_submission
-	@cp $(INTEGRATED).tex kbs_submission/
-	@cp $(INTEGRATED).pdf kbs_submission/
+	@cp $(MAIN).tex kbs_submission/
+	@cp $(MAIN).pdf kbs_submission/
+	@cp $(ANONYMOUS).tex kbs_submission/
+	@cp $(ANONYMOUS).pdf kbs_submission/
+	@cp title_page.tex kbs_submission/ 2>/dev/null || true
 	@cp -r fig/ kbs_submission/ 2>/dev/null || true
 	@cp -r ref/ kbs_submission/ 2>/dev/null || true
 	@cp highlights.pdf kbs_submission/ 2>/dev/null || true
+	@cp SUBMISSION_GUIDE.md kbs_submission/ 2>/dev/null || true
 	@tar -czf kbs_submission_$(shell date +%Y%m%d_%H%M%S).tar.gz kbs_submission/
 	@echo "Submission archive created: kbs_submission_*.tar.gz"
 	@rm -rf kbs_submission/
@@ -246,25 +289,31 @@ help:
 	@echo
 	@echo "Main Targets:"
 	@echo "  all, main       - Build main KBS paper (forced rebuild)"
+	@echo "  anonymous       - Build anonymized paper for double-blind review"
 	@echo "  build           - Build main KBS paper (forced rebuild)"
 	@echo "  pdf             - Build main KBS paper (alias for main)"
 	@echo "  main-check      - Build main KBS paper (only if needed)"
+	@echo "  anonymous-check - Build anonymized paper (only if needed)"
 	@echo "  template        - Build basic KBS template (forced rebuild)"
 	@echo "  integrated      - Build integrated KBS paper (via extraction)"
 	@echo "  extract         - Extract content from IEEE source"
-	@echo "  highlights      - Build highlights document"
+	@echo "  highlights      - Build highlights document (forced rebuild)"
+	@echo "  highlights-check - Build highlights document (only if needed)"
 	@echo
 	@echo "Development:"
 	@echo "  dev             - Full development workflow (integrated)"
 	@echo "  rebuild         - Force re-extraction and rebuild"
 	@echo "  quick           - Quick compile main paper (no bibtex)"
 	@echo "  quick-main      - Quick compile main paper (no bibtex)"
+	@echo "  quick-anonymous - Quick compile anonymized paper (no bibtex)"
 	@echo
 	@echo "Utilities:"
 	@echo "  status          - Show paper status and files"
 	@echo "  pages           - Count pages in PDFs"
 	@echo "  validate        - Check KBS requirements"
 	@echo "  view            - Open integrated paper"
+	@echo "  view-main       - Open main paper"
+	@echo "  view-anonymous  - Open anonymized paper"
 	@echo "  archive         - Create submission archive"
 	@echo
 	@echo "Cleaning:"
@@ -273,6 +322,8 @@ help:
 	@echo "  clean-all       - Remove all generated files"
 	@echo
 	@echo "Files:"
+	@echo "  Main: $(MAIN).tex"
+	@echo "  Anonymous: $(ANONYMOUS).tex"
 	@echo "  Source: $(SOURCE_PAPER)"
 	@echo "  Template: $(MAIN).tex"
 	@echo "  Integrated: $(INTEGRATED).tex"
@@ -282,6 +333,6 @@ help:
 .PRECIOUS: $(EXTRACTED_DIR) $(INTEGRATED).tex
 
 # Declare phony targets
-.PHONY: all main build main-check template integrated extract rebuild highlights quick quick-template pdf
-.PHONY: view view-template view-highlights status pages validate archive dev
+.PHONY: all main anonymous build main-check anonymous-check template integrated extract rebuild highlights quick quick-main quick-anonymous quick-template pdf
+.PHONY: view view-main view-anonymous view-template view-highlights status pages validate archive dev
 .PHONY: clean clean-extract clean-all help
