@@ -14,7 +14,13 @@
 %% Use the option review to obtain double line spacing
 %% \documentclass[preprint,review,12pt]{elsarticle}
 
-%% Use the options 1p,twocolumn; 3p; 3p,twocolumn; 5p; or 5p,twocolumn
+%% Use the options 1p,twocolumn; 3p; 3p,twocolumn; 5p; oThis study utilized two publicly available datasets for medical image classification tasks:
+\begin{enumerate}
+\item Retinal OCT Images (optical coherence tomography): Available from Kermany et al. (2018) via Kaggle at \\
+\url{https://www.kaggle.com/datasets/paultimothymooney/kermany2018}
+\item Chest X-Ray Images (Pneumonia): Available via Kaggle at \\
+\url{https://www.kaggle.com/datasets/paultimothymooney/chest-xray-pneumonia}
+\end{enumerate}ocolumn
 %% for a journal layout:
 %% \documentclass[final,1p,times]{elsarticle}
 %% \documentclass[final,1p,times,twocolumn]{elsarticle}
@@ -38,9 +44,18 @@
 \usepackage{algorithmic}
 \usepackage{textcomp}
 \usepackage{multirow}
-\usepackage{url}
+\usepackage{xurl}  % Better URL breaking than standard url package
 \usepackage{subcaption}
 \usepackage{microtype}
+
+%% Navigation and bookmark packages for anonymous version
+\usepackage[bookmarks=true,bookmarksnumbered=true,bookmarksopen=true,
+           colorlinks=true,linkcolor=blue,citecolor=blue,urlcolor=blue,
+           breaklinks=true,  % Allow breaking of URLs across lines
+           pdftitle={MedDef: An Efficient Self-Attention Model for Adversarial Resilience in Medical Imaging with Unstructured Pruning (Anonymous Version)},
+           pdfauthor={Anonymous},
+           pdfsubject={Medical Imaging, Adversarial Defense, Deep Learning},
+           pdfkeywords={Adversarial Resilience, Medical Imaging, Defense-Aware Attention Mechanism, Unstructured Pruning, Robust Model}]{hyperref}
 
 %% The lineno packages adds line numbers. Start line numbering with
 %% \begin{linenumbers}, end it with \end{linenumbers}. Or switch it on
@@ -528,11 +543,28 @@ The consistently low misclassification rates across both anatomically distinct i
 \subsection{Per-Class Performance Analysis}
 To provide comprehensive evaluation beyond overall accuracy metrics, we present detailed per-class performance analysis using precision, recall, and F1-score for both datasets, revealing the model's discriminative capabilities across different pathological conditions and its clinical readiness for deployment.
 
+\begin{figure}[!t]
+\centering
+\begin{subfigure}[b]{0.45\columnwidth}
+\centering
+\includegraphics[width=\columnwidth]{fig/per-class/chest_xray.png}
+\caption{Chest X-Ray Per-Class Metrics}
+\end{subfigure}
+\hfill
+\begin{subfigure}[b]{0.45\columnwidth}
+\centering
+\includegraphics[width=\columnwidth]{fig/per-class/roct.png}
+\caption{ROCT Per-Class Metrics}
+\end{subfigure}
+\caption{Per-class performance metrics for MedDef across both datasets: (a) Chest X-Ray dataset showing precision, recall, and F1-score for Normal and Pneumonia classes, and (b) ROCT dataset displaying metrics for CNV, DME, Drusen, and Normal classes, demonstrating consistent high performance across diverse pathological conditions.}
+\label{fig:per_class_metrics}
+\end{figure}
+
 For the ROCT dataset, Class 0 (CNV) demonstrates precision=0.960, recall=1.000, and F1-score=0.980, achieving perfect sensitivity for detecting choroidal neovascularization, which is essential for preventing vision loss. Class 1 (DME) performs flawlessly on all metrics (1.000, 1.000, 1.000), indicating the model's capacity to accurately detect diabetic macular edema. Class 2 (DRUSEN) shows precision=1.000, recall=0.959, and F1-score=0.979, with slightly lower recall indicating the challenging differentiation between specific drusen types and early CNV. Class 3 (NORMAL) achieves perfect metrics (1.000, 1.000, 1.000), ensuring accurate identification of healthy retinal tissue.
 
 For the Chest X-Ray dataset, Class 0 (NORMAL) demonstrates precision=0.942, recall=0.962, and F1-score=0.952, showing strong performance in identifying healthy lung parenchyma while maintaining clinical sensitivity. Class 1 (PNEUMONIA) achieves precision=0.986, recall=0.978, and F1-score=0.982, reflecting the model's excellent capability for pneumonia detection with minimal false negatives—crucial for timely clinical intervention.
 
-These comprehensive per-class metrics validate MedDef's clinical applicability, demonstrating consistent high performance across diverse pathological conditions while maintaining the diagnostic precision required for medical deployment. The near-perfect performance for vision-threatening conditions (DME, CNV) and high pneumonia detection accuracy underscore the model's potential to support clinical decision-making in critical diagnostic scenarios.
+These comprehensive per-class metrics, as visualized in Fig.~\ref{fig:per_class_metrics}, validate MedDef's clinical applicability, demonstrating consistent high performance across diverse pathological conditions while maintaining the diagnostic precision required for medical deployment. The near-perfect performance for vision-threatening conditions (DME, CNV) and high pneumonia detection accuracy underscore the model's potential to support clinical decision-making in critical diagnostic scenarios.
 
 \subsection{Interpretability through Saliency Mapping}
 To enhance interpretability and validate model robustness, Grad-CAM (Gradient-Weighted Class Activation Mapping) was employed to visualize regions of high importance in model decision-making. These saliency maps reveal striking differences between MedDef and comparative models in their attention patterns across both datasets.
