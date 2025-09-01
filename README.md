@@ -2,7 +2,7 @@
 
 This repository contains the LaTeX source for "MedDef: An Efficient Self-Attention Model for Adversarial Resilience in Medical Imaging with Unstructured Pruning" - a research paper submitted to Knowledge-Based Systems journal.
 
-## � **Public Repository Access**
+## 🔗 **Public Repository Access**
 
 > **📂 Complete Project Download:**  
 > **🌐 [https://github.com/Hetawk/elsevier_kbs-public.git](https://github.com/Hetawk/elsevier_kbs-public.git)**
@@ -15,7 +15,7 @@ This repository contains the LaTeX source for "MedDef: An Efficient Self-Attenti
 > make main  # Build the paper
 > ```
 
-## �📁 Project Structure
+## 📁 Project Structure
 
 ```
 ├── main.tex                    # Main manuscript (with author information)
@@ -146,7 +146,7 @@ make clean && make pdf && make anonymous && make clean
 - **Bibliography**: 50+ references in BibTeX format
 - **Figures**: 8 main figures + class distribution + per-class metrics
 
-## � Data Availability
+## 📊 Data Availability
 
 This study utilized two publicly available datasets for medical image classification tasks:
 
@@ -158,7 +158,20 @@ This study utilized two publicly available datasets for medical image classifica
    Available via Kaggle:  
    🔗 [https://www.kaggle.com/datasets/paultimothymooney/chest-xray-pneumonia](https://www.kaggle.com/datasets/paultimothymooney/chest-xray-pneumonia)
 
-## �🔍 Technical Details
+### 💻 Source Code Availability
+
+The complete implementation of the MedDef model and experimental code is available at:  
+🔗 [https://github.com/Hetawk/meddef1.git](https://github.com/Hetawk/meddef1.git)
+
+**Quick Setup:**
+
+```bash
+git clone https://github.com/Hetawk/meddef1.git
+cd meddef1
+# Follow setup instructions in the code repository
+```
+
+## 🔍 Technical Details
 
 ### LaTeX Packages Used
 
@@ -204,6 +217,22 @@ make declaration_interests  # Build declaration_interests.pdf
 make highlights     # Build highlights.pdf
 make all           # Build all documents
 ```
+
+## 📚 Submission Package
+
+For journal submission, the complete package includes:
+
+- `main.pdf` - Main manuscript with navigation
+- `main_anonymous.pdf` - Anonymous version for review
+- `author_agreement.pdf` - Signed author agreement
+- `cover_letter.pdf` - Cover letter with author credentials
+- `declaration_interests.pdf` - Declaration of competing interests
+- `highlights.pdf` - Research highlights
+- Source files and bibliography
+
+## 🔄 Version Control
+
+This project uses Git for version control. All major manuscript versions are tracked with proper commit messages for revision history.
 
 ---
 
