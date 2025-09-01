@@ -146,7 +146,19 @@ make clean && make pdf && make anonymous && make clean
 - **Bibliography**: 50+ references in BibTeX format
 - **Figures**: 8 main figures + class distribution + per-class metrics
 
-## 🔍 Technical Details
+## � Data Availability
+
+This study utilized two publicly available datasets for medical image classification tasks:
+
+1. **Retinal OCT Images (optical coherence tomography)**  
+   Available from Kermany et al. (2018) via Kaggle:  
+   🔗 [https://www.kaggle.com/datasets/paultimothymooney/kermany2018](https://www.kaggle.com/datasets/paultimothymooney/kermany2018)
+
+2. **Chest X-Ray Images (Pneumonia)**  
+   Available via Kaggle:  
+   🔗 [https://www.kaggle.com/datasets/paultimothymooney/chest-xray-pneumonia](https://www.kaggle.com/datasets/paultimothymooney/chest-xray-pneumonia)
+
+## �🔍 Technical Details
 
 ### LaTeX Packages Used
 
